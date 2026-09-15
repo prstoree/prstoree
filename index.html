@@ -1,1 +1,2473 @@
-helooo
+<!DOCTYPE html>
+<html lang="id" class="dark h-full" data-theme="dark-emerald">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIP-STAF | Sistem Informasi Pengawasan Pengetikan Staf Pemerintah</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN for Admin Infographics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            950: '#070a12',
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                            600: '#475569',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070a12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        
+        .sheet-cell:focus {
+            outline: 2px solid var(--accent);
+            background-color: var(--accent-bg) !important;
+            z-index: 10;
+        }
+
+        .glass-panel {
+            background: var(--bg-card-glass, rgba(30, 41, 59, 0.75));
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+        }
+
+        :root, [data-theme="dark-emerald"] {
+            --bg-main: #070a12;
+            --bg-surface: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-glass: rgba(30, 41, 59, 0.75);
+            --border-theme: #1e293b;
+            --border-subtle: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --accent-bg: rgba(16, 185, 129, 0.15);
+        }
+
+        [data-theme="garuda-red"] {
+            --bg-main: #0f0505;
+            --bg-surface: #1f0a0a;
+            --bg-card: #331212;
+            --bg-card-glass: rgba(51, 18, 18, 0.8);
+            --border-theme: #7f1d1d;
+            --border-subtle: #991b1b;
+            --text-main: #fff5f5;
+            --text-muted: #fca5a5;
+            --accent: #ef4444;
+            --accent-hover: #dc2626;
+            --accent-bg: rgba(239, 68, 68, 0.15);
+        }
+
+        [data-theme="midnight-blue"] {
+            --bg-main: #030712;
+            --bg-surface: #0b1329;
+            --bg-card: #152238;
+            --bg-card-glass: rgba(21, 34, 56, 0.75);
+            --border-theme: #1e3a8a;
+            --border-subtle: #2563eb;
+            --text-main: #f0f9ff;
+            --text-muted: #93c5fd;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --accent-bg: rgba(59, 130, 246, 0.15);
+        }
+
+        [data-theme="cyber-purple"] {
+            --bg-main: #0d0714;
+            --bg-surface: #170d28;
+            --bg-card: #25163f;
+            --bg-card-glass: rgba(37, 22, 63, 0.75);
+            --border-theme: #4c1d95;
+            --border-subtle: #6b21a8;
+            --text-main: #fae8ff;
+            --text-muted: #d8b4fe;
+            --accent: #a855f7;
+            --accent-hover: #9333ea;
+            --accent-bg: rgba(168, 85, 247, 0.15);
+        }
+
+        [data-theme="clean-light"] {
+            --bg-main: #f1f5f9;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-glass: rgba(255, 255, 255, 0.9);
+            --border-theme: #cbd5e1;
+            --border-subtle: #94a3b8;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --accent: #0284c7;
+            --accent-hover: #0369a1;
+            --accent-bg: rgba(2, 132, 199, 0.15);
+        }
+
+        [data-theme] .bg-slate-950 { background-color: var(--bg-main) !important; }
+        [data-theme] .bg-slate-900 { background-color: var(--bg-surface) !important; }
+        [data-theme] .bg-slate-900\/90 { background-color: var(--bg-surface) !important; }
+        [data-theme] .glass-panel { background: var(--bg-card-glass) !important; border-color: var(--border-theme) !important; }
+        [data-theme="clean-light"] .text-slate-100, 
+        [data-theme="clean-light"] .text-slate-200, 
+        [data-theme="clean-light"] .text-white { color: var(--text-main) !important; }
+        [data-theme="clean-light"] .text-slate-400,
+        [data-theme="clean-light"] .text-slate-500 { color: var(--text-muted) !important; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #print-report-area, #print-report-area * { visibility: visible; }
+            #print-report-area { position: absolute; left: 0; top: 0; width: 100%; color: #000 !important; background: #fff !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans h-full flex flex-col overflow-hidden select-none">
+
+    <!-- Official Top Government Branding Bar -->
+    <div class="bg-slate-950 border-b border-slate-800/80 px-4 py-1.5 flex flex-wrap items-center justify-between text-xs shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="w-6 h-6 rounded-md bg-red-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                <i class="fa-solid fa-landmark"></i>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="font-bold tracking-wider text-slate-200 uppercase text-[11px]">REPUBLIK INDONESIA</span>
+                <span class="text-slate-600">|</span>
+                <span class="text-slate-400 font-medium text-[11px] truncate">Portal Sistem Pengawasan Naskah & Pengetikan Staf (SIP-STAF)</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 text-[11px]">
+            <span class="text-amber-400 bg-amber-950/80 border border-amber-800/80 px-2 py-0.5 rounded-full font-mono text-[10px] flex items-center gap-1">
+                <i class="fa-solid fa-shield-halved"></i> Mode Pengawasan Resmi Active
+            </span>
+            <span id="gov-clock-display" class="font-mono text-slate-300">00:00:00 WIB</span>
+        </div>
+    </div>
+
+    <!-- Main Application Header -->
+    <header class="bg-slate-900 border-b border-slate-800 flex flex-col shrink-0">
+        <!-- Title & Main Navigation Switcher Hub -->
+        <div class="flex flex-wrap items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800/80 gap-2">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-emerald-950/80 border border-emerald-800 rounded-xl text-emerald-400">
+                    <i class="fa-solid fa-file-contract text-base"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold text-white tracking-wide uppercase flex items-center gap-2">
+                        SIP-STAF PEMERINTAHAN <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono">v5.0 Official</span>
+                    </h1>
+                    <p class="text-[11px] text-slate-400">Sistem Informasi Monitoring Kinerja Staf Pengetik Naskah Dinas & Spreadsheet Workspace</p>
+                </div>
+            </div>
+
+            <!-- View Switcher Tabs (Portal Utama vs Monitoring Admin vs Workspace Pengetikan) -->
+            <div class="flex items-center bg-slate-950 p-1 rounded-2xl border border-slate-800 gap-1 overflow-x-auto">
+                <button id="nav-btn-home" onclick="switchMainView('home')" class="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-emerald-600 text-white shadow flex items-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-building-columns"></i> Portal Utama
+                </button>
+                <button id="nav-btn-admin" onclick="switchMainView('admin')" class="px-3.5 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard Pengawas (Admin)
+                </button>
+                <button id="nav-btn-browser" onclick="switchMainView('browser')" class="px-3.5 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-table-cells"></i> Workspace Pengetikan
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Controls, Theme Selector, & Settings Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2.5 px-4 py-2 bg-slate-900/90">
+            <!-- Navigation & Address Bar -->
+            <div class="flex items-center gap-2 flex-1 min-w-[300px]">
+                <div class="flex items-center gap-1">
+                    <button onclick="navigateHistory('back')" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors" title="Kembali">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                    </button>
+                    <button onclick="navigateHistory('forward')" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors" title="Maju">
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                    <button onclick="refreshCurrentSheet()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors" title="Muat Ulang Sheet">
+                        <i class="fa-solid fa-rotate-right text-xs" id="refresh-icon"></i>
+                    </button>
+                </div>
+
+                <div class="flex-1 flex items-center bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 transition-all">
+                    <i class="fa-solid fa-link text-emerald-500 text-xs mr-2"></i>
+                    <input type="text" id="url-address-bar" class="w-full bg-transparent text-xs text-slate-200 outline-none font-mono" placeholder="Masukkan URL Google Sheets (https://docs.google.com/spreadsheets/d/...)" onkeydown="if(event.key==='Enter') loadUrlFromAddressBar()">
+                    <button onclick="loadUrlFromAddressBar()" class="ml-2 text-[11px] bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1 shrink-0 font-medium">
+                        <i class="fa-solid fa-cloud-arrow-down text-[10px]"></i> Muat Sheet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Idle Settings & Theme Selector -->
+            <div class="flex items-center gap-2 flex-wrap">
+                <!-- Idle Timeout Selector -->
+                <div class="flex items-center gap-1.5 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                    <i class="fa-solid fa-hourglass-half text-amber-400 text-xs"></i>
+                    <span class="text-xs text-slate-300 font-medium hidden sm:inline">Batas Inaktif:</span>
+                    <select id="idle-timeout-select" onchange="updateIdleTimeoutSetting(this.value)" class="bg-slate-900 text-xs text-slate-200 border border-slate-700 rounded px-2 py-0.5 outline-none focus:border-emerald-500 cursor-pointer">
+                        <option value="5">5 Detik</option>
+                        <option value="10">10 Detik</option>
+                        <option value="30" selected>30 Detik (Standar)</option>
+                        <option value="60">1 Menit</option>
+                        <option value="120">2 Menit</option>
+                        <option value="180">3 Menit</option>
+                    </select>
+                </div>
+
+                <!-- Theme Selector -->
+                <div class="flex items-center gap-1.5 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                    <i class="fa-solid fa-palette text-emerald-400 text-xs" id="theme-icon"></i>
+                    <span class="text-xs text-slate-300 font-medium hidden sm:inline">Tema:</span>
+                    <select id="theme-select" onchange="changeAppTheme(this.value)" class="bg-slate-900 text-xs text-slate-200 border border-slate-700 rounded px-2 py-0.5 outline-none focus:border-emerald-500 cursor-pointer font-medium">
+                        <option value="dark-emerald" selected>🟢 Executive Emerald</option>
+                        <option value="garuda-red">🔴 🇮🇩 Garuda Merah Putih</option>
+                        <option value="midnight-blue">🔵 Midnight Navy (BKN)</option>
+                        <option value="cyber-purple">🟣 Cyber Purple State</option>
+                        <option value="clean-light">⚪ Paper Clean Light</option>
+                    </select>
+                </div>
+
+                <!-- Add New Staff Button -->
+                <button onclick="openAddStaffModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 transition-all shadow-md shadow-emerald-950/40">
+                    <i class="fa-solid fa-user-plus"></i> + Tambah Staf Pengetik
+                </button>
+            </div>
+        </div>
+
+        <div id="browser-loading-bar" class="h-1 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 w-0 transition-all duration-300"></div>
+    </header>
+
+    <!-- Main Viewport Area -->
+    <main class="flex-1 relative overflow-hidden flex flex-col bg-slate-950">
+
+        <!-- ================= VIEW 1: LANDING PORTAL UTAMA PEMERINTAHAN ================= -->
+        <div id="view-home" class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-950">
+            <!-- Hero Announcement & Welcome Card -->
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800 mb-6 bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/40 relative overflow-hidden shadow-2xl">
+                <div class="relative z-10 max-w-3xl">
+                    <div class="inline-flex items-center gap-2 bg-emerald-950/80 border border-emerald-800 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold mb-3">
+                        <i class="fa-solid fa-building-flag"></i> Portal Resmi Pengawasan Pengetikan Naskah Dinas Instansi
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight mb-2">
+                        Sistem Informasi Pengawasan Staf Pengetik (SIP-STAF)
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-5">
+                        Media terintegrasi untuk memantau produktivitas pengetikan, jam kerja aktif vs melamun (inaktif), serta validasi naskah dinas seluruh staf operator secara real-time dan transparan.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button onclick="switchMainView('admin')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-2.5 rounded-2xl shadow-lg shadow-emerald-950/60 transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line"></i> Buka Dashboard Pengawas Admin
+                        </button>
+                        <button onclick="switchMainView('browser')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs px-5 py-2.5 rounded-2xl transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-keyboard"></i> Masuk Ke Workspace Pengetikan
+                        </button>
+                        <button onclick="openAppsScriptModal()" class="bg-slate-950 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 text-xs px-4 py-2.5 rounded-2xl transition-colors flex items-center gap-1.5">
+                            <i class="fa-solid fa-plug text-xs"></i> Connect Google Apps Script
+                        </button>
+                    </div>
+                </div>
+                <div class="absolute -right-6 -bottom-10 opacity-10 text-emerald-400 pointer-events-none hidden md:block">
+                    <i class="fa-solid fa-landmark text-[220px]"></i>
+                </div>
+            </div>
+
+            <!-- Government Statistics & Quick Metrics -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="glass-panel p-4 rounded-2xl border border-slate-800">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider">Total Staf Terdaftar</span>
+                        <i class="fa-solid fa-users-gear text-emerald-400 text-xl"></i>
+                    </div>
+                    <div id="home-total-staff" class="text-3xl font-extrabold text-white font-mono">0</div>
+                    <p class="text-[11px] text-slate-400 mt-1">Staf operator pengetik instansi</p>
+                </div>
+
+                <div class="glass-panel p-4 rounded-2xl border border-emerald-500/30">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider">Staf Mengetik Aktif</span>
+                        <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+                    </div>
+                    <div id="home-active-staff" class="text-3xl font-extrabold text-emerald-400 font-mono">0</div>
+                    <p class="text-[11px] text-emerald-500/80 mt-1">Sedang aktif melakukan pengetikan</p>
+                </div>
+
+                <div class="glass-panel p-4 rounded-2xl border border-amber-500/30">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider">Staf Inaktif / Melamun</span>
+                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                    </div>
+                    <div id="home-idle-staff" class="text-3xl font-extrabold text-amber-400 font-mono">0</div>
+                    <p class="text-[11px] text-amber-500/80 mt-1">Toleransi batas inaktif terlampaui</p>
+                </div>
+
+                <div class="glass-panel p-4 rounded-2xl border border-slate-800">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider">Total Kata Naskah</span>
+                        <i class="fa-solid fa-file-pen text-cyan-400 text-xl"></i>
+                    </div>
+                    <div id="home-total-words" class="text-3xl font-extrabold text-cyan-300 font-mono">0</div>
+                    <p class="text-[11px] text-slate-400 mt-1">Akumulasi entri kata shift ini</p>
+                </div>
+            </div>
+
+            <!-- Department Breakdown & Direct Workspace Access Cards -->
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-address-book text-emerald-400"></i> Daftar Staf Pengetik & Unit Kerja Resmi
+                        </h3>
+                        <p class="text-xs text-slate-400">Pilih staf pengetik di bawah ini untuk membuka sheet workspace atau verifikasi kode akses PIN.</p>
+                    </div>
+                    <button onclick="openAddStaffModal()" class="text-xs bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-xl transition-colors">
+                        + Registrasi Staf Baru
+                    </button>
+                </div>
+
+                <div id="home-staff-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Dynamic Government Staff Cards injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 2: ADMIN LIVE DASHBOARD MONITORING ================= -->
+        <div id="view-admin" class="flex-1 hidden p-4 sm:p-6 overflow-y-auto bg-slate-950">
+            <!-- Admin Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h1 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-emerald-400"></i> Dashboard Pengawasan Staf Live (Admin Command Center)
+                    </h1>
+                    <p class="text-xs text-slate-400">Pantau aktivitas pengetikan naskah, NIP pegawai, PIN akses, efisiensi %, dan waktu produktif staf secara langsung.</p>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button onclick="resetAllTimers()" class="px-3.5 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-xl transition-colors">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i> Reset Waktu Staf
+                    </button>
+                    <button onclick="openPrintReportModal()" class="px-3.5 py-1.5 text-xs bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-xl shadow transition-all">
+                        <i class="fa-solid fa-print mr-1"></i> Cetak Berita Acara Resmi
+                    </button>
+                    <button onclick="exportAdminReport()" class="px-3.5 py-1.5 text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl shadow transition-all">
+                        <i class="fa-solid fa-download mr-1"></i> Unduh Laporan CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Metrics Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="glass-panel p-4 rounded-2xl">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-medium">Total Staf Operator</span>
+                        <i class="fa-solid fa-users text-emerald-400 text-lg"></i>
+                    </div>
+                    <div id="dash-total-staff" class="text-2xl font-bold text-white font-mono">0</div>
+                    <div class="text-[11px] text-slate-500 mt-1">Staf terdaftar</div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-2xl border-emerald-500/30">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-medium">Staf Aktif (Sedang Mengetik)</span>
+                        <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+                    </div>
+                    <div id="dash-active-staff" class="text-2xl font-bold text-emerald-400 font-mono">0</div>
+                    <div class="text-[11px] text-emerald-500/80 mt-1">🟢 Status: Aktif bekerja</div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-2xl border-amber-500/30">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-medium">Staf Inaktif / Melamun</span>
+                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                    </div>
+                    <div id="dash-idle-staff" class="text-2xl font-bold text-amber-400 font-mono">0</div>
+                    <div class="text-[11px] text-amber-500/80 mt-1">🟡 Status: Inaktif melampaui batas</div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-2xl">
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs font-medium">Total Entri Kata Diketik</span>
+                        <i class="fa-solid fa-keyboard text-cyan-400 text-lg"></i>
+                    </div>
+                    <div id="dash-total-words" class="text-2xl font-bold text-cyan-300 font-mono">0</div>
+                    <div class="text-[11px] text-slate-500 mt-1">Akumulasi shift ini</div>
+                </div>
+            </div>
+
+            <!-- Live Monitoring Table with Passcodes -->
+            <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800 shadow-xl mb-6">
+                <div class="p-4 bg-slate-900/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                    <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-table-list text-emerald-400"></i> Tabel Live Pengawasan NIP, Kode PIN Akses, & Waktu Kerja Staf
+                    </h2>
+                    <div class="flex items-center gap-3">
+                        <select id="filter-unit-kerja" onchange="filterAdminTableByUnit(this.value)" class="bg-slate-950 text-xs text-slate-200 border border-slate-700 rounded-xl px-2.5 py-1 outline-none font-medium">
+                            <option value="ALL">Semua Unit Kerja</option>
+                            <option value="Sekretariat">Sekretariat</option>
+                            <option value="Bagian Umum">Bagian Umum</option>
+                            <option value="Keuangan">Keuangan</option>
+                            <option value="Perencanaan">Perencanaan</option>
+                        </select>
+                        <span class="text-[11px] text-slate-400 font-mono flex items-center gap-1.5 shrink-0">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Live Per Detik
+                        </span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] font-semibold tracking-wider border-b border-slate-800">
+                            <tr>
+                                <th class="py-3 px-4">Identitas Staf & NIP</th>
+                                <th class="py-3 px-4">Unit Kerja / Sub-Bagian</th>
+                                <th class="py-3 px-4">Status</th>
+                                <th class="py-3 px-4">Kode PIN Sandi</th>
+                                <th class="py-3 px-4">Waktu Aktif</th>
+                                <th class="py-3 px-4">Waktu Inaktif</th>
+                                <th class="py-3 px-4">Kata Diketik</th>
+                                <th class="py-3 px-4 w-40">Target Shift</th>
+                                <th class="py-3 px-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-monitoring-tbody" class="divide-y divide-slate-800/60 font-mono"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Infographics & Timeframe Filter Section -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-slate-900/70 p-3 rounded-2xl border border-slate-800">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-chart-column text-emerald-400 text-base"></i>
+                    <div>
+                        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Infografis Visual & Analytics Staf</h3>
+                        <p class="text-[11px] text-slate-400">Pilih rentang waktu untuk memantau performa harian, mingguan, atau bulanan.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
+                    <button id="tf-btn-daily" onclick="setTimeframeFilter('daily')" class="px-3 py-1 text-xs font-semibold rounded-lg bg-emerald-600 text-white shadow transition-all">Hari Ini</button>
+                    <button id="tf-btn-weekly" onclick="setTimeframeFilter('weekly')" class="px-3 py-1 text-xs font-semibold rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">Minggu Ini</button>
+                    <button id="tf-btn-monthly" onclick="setTimeframeFilter('monthly')" class="px-3 py-1 text-xs font-semibold rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">Bulan Ini</button>
+                </div>
+            </div>
+
+            <div class="mb-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col justify-between lg:col-span-2">
+                    <div class="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-2">
+                        <h3 class="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i> Waktu Kerja Aktif vs Inaktif (<span id="tf-label-time">Hari Ini</span>)
+                        </h3>
+                        <span id="tf-badge-live" class="text-[10px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full">Live Stats</span>
+                    </div>
+                    <div class="relative w-full h-56">
+                        <canvas id="chart-active-idle"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-2">
+                        <h3 class="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-teal-400"></i> Distribusi Keaktifan Staf
+                        </h3>
+                    </div>
+                    <div class="relative w-full h-44 flex items-center justify-center">
+                        <canvas id="chart-status-pie"></canvas>
+                    </div>
+                    <div id="infographic-efficiency-badge" class="mt-2 bg-slate-950/80 border border-slate-800 p-2 rounded-xl flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Rata-rata Efisiensi Intansi (<span id="tf-label-eff">Hari Ini</span>):</span>
+                        <span id="dash-efficiency-score" class="font-mono font-bold text-emerald-400">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6 glass-panel p-4 rounded-2xl border border-slate-800">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-2">
+                    <h3 class="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye text-cyan-400"></i> Pencapaian Target Entri Naskah (<span id="tf-label-target">Hari Ini</span>)
+                    </h3>
+                    <div id="dash-top-performer" class="text-xs text-amber-300 bg-amber-950/70 border border-amber-800/80 px-2.5 py-1 rounded-xl font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-trophy text-amber-400 text-xs"></i> Top Operator: <span id="dash-top-performer-name" class="font-bold text-white">-</span>
+                    </div>
+                </div>
+                <div class="relative w-full h-48">
+                    <canvas id="chart-words-progress"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 3: SPREADSHEET WORKSPACE ================= -->
+        <div id="view-browser" class="flex-1 hidden flex-col h-full overflow-hidden">
+            
+            <!-- Operator Selector Header Bar -->
+            <div class="bg-slate-900/90 border-b border-slate-800 px-4 py-2 overflow-x-auto flex items-center justify-between gap-3 shrink-0">
+                <div class="flex items-center gap-3 overflow-x-auto">
+                    <div class="flex items-center gap-1.5 text-xs text-slate-400 font-semibold uppercase tracking-wider pr-2 border-r border-slate-800 shrink-0">
+                        <i class="fa-solid fa-user-gear text-emerald-400"></i> Staf Aktif:
+                    </div>
+                    <div id="staff-cards-container" class="flex items-center gap-2.5 overflow-x-auto py-0.5"></div>
+                </div>
+
+                <!-- Document Security Classification Badge -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="text-[11px] text-slate-400 font-medium">Klasifikasi Kerahasiaan:</span>
+                    <select id="doc-classification" onchange="updateDocClassification(this.value)" class="bg-slate-950 text-xs font-bold text-amber-400 border border-amber-700/80 rounded-xl px-2.5 py-1 outline-none">
+                        <option value="BIASA">⚪ BIASA / UMUM</option>
+                        <option value="TERBATAS" selected>🟡 TERBATAS</option>
+                        <option value="RAHASIA">🔴 RAHASIA</option>
+                        <option value="SANGAT RAHASIA">🟣 SANGAT RAHASIA</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Active Operator Toolbar & Timers -->
+            <div class="bg-slate-900 px-4 py-2 flex flex-wrap items-center justify-between border-b border-slate-800 gap-2 shrink-0">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <div class="flex items-center gap-2.5 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <div id="active-staff-avatar" class="w-7 h-7 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
+                            OP
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span id="active-staff-name" class="text-xs font-semibold text-slate-100">Operator 1</span>
+                                <span id="active-staff-nip" class="text-[10px] font-mono text-emerald-400 bg-emerald-950 border border-emerald-800 px-1.5 py-0.2 rounded">NIP. 19920310...</span>
+                            </div>
+                            <div id="active-staff-role" class="text-[10px] text-slate-400">Data Entry Typist - Bagian Umum</div>
+                        </div>
+                    </div>
+
+                    <!-- Timers Badges -->
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1.5 bg-emerald-950/70 border border-emerald-800 px-2.5 py-1 rounded-xl">
+                            <i class="fa-solid fa-keyboard text-emerald-400 text-xs"></i>
+                            <span class="text-[11px] text-emerald-200 font-medium">Aktif:</span>
+                            <span id="timer-active-display" class="font-mono text-xs font-bold text-emerald-400">00:00:00</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-amber-950/70 border border-amber-800 px-2.5 py-1 rounded-xl">
+                            <i class="fa-solid fa-bed text-amber-400 text-xs"></i>
+                            <span class="text-[11px] text-amber-200 font-medium">Inaktif:</span>
+                            <span id="timer-idle-display" class="font-mono text-xs font-bold text-amber-400">00:00:00</span>
+                        </div>
+                    </div>
+
+                    <!-- Typed Counter -->
+                    <div class="hidden md:flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <i class="fa-solid fa-i-cursor text-teal-400 text-xs"></i>
+                        <span class="text-xs text-slate-400">Kata Naskah:</span>
+                        <span id="active-staff-words" class="font-mono text-xs font-bold text-slate-100">0</span>
+                        <span class="text-xs text-slate-500">/ <span id="active-staff-target">500</span></span>
+                    </div>
+                </div>
+
+                <!-- Mode Switcher & Save Button -->
+                <div class="flex items-center gap-2">
+                    <div class="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center">
+                        <button id="btn-mode-native" onclick="switchEditorMode('native')" class="px-3 py-1 text-xs rounded-lg bg-emerald-600 text-white font-medium flex items-center gap-1.5 transition-all shadow">
+                            <i class="fa-solid fa-table-cells"></i> Native Sheet Editor
+                        </button>
+                        <button id="btn-mode-iframe" onclick="switchEditorMode('iframe')" class="px-3 py-1 text-xs rounded-lg text-slate-400 hover:text-white font-medium flex items-center gap-1.5 transition-all">
+                            <i class="fa-brands fa-google text-emerald-400"></i> Google Web Embed
+                        </button>
+                    </div>
+
+                    <button id="btn-save-sheet-data" onclick="saveCurrentSheetDataToGoogle()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold px-4 py-1.5 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-emerald-950/50">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Data Ke Google Sheets
+                    </button>
+                </div>
+            </div>
+
+            <!-- Workspace Viewport Container -->
+            <div class="flex-1 relative bg-slate-950 overflow-hidden flex flex-col">
+
+                <!-- Native Sheet Grid Editor -->
+                <div id="container-native-editor" class="flex-1 flex flex-col h-full overflow-hidden bg-slate-900">
+                    <!-- Formula & Controls Header -->
+                    <div class="bg-slate-950 px-4 py-2 border-b border-slate-800 flex flex-wrap items-center justify-between text-xs gap-2 shrink-0">
+                        <div class="flex items-center gap-2 flex-1 min-w-[280px]">
+                            <span class="text-emerald-400 font-mono font-bold">fx</span>
+                            <span id="selected-cell-id" class="text-[10px] font-mono text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800 min-w-[32px] text-center">A1</span>
+                            <input type="text" id="formula-bar" oninput="handleFormulaInput(this.value)" class="bg-slate-900 border border-slate-700 text-slate-100 px-3 py-1 rounded-lg w-full font-mono focus:border-emerald-500 outline-none transition-colors" placeholder="Pilih sel untuk mengedit data naskah atau rumus...">
+                        </div>
+                        <div class="flex items-center gap-1.5 text-slate-300 flex-wrap">
+                            <button onclick="addGridRow()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 flex items-center gap-1"><i class="fa-solid fa-plus text-[10px]"></i> Baris</button>
+                            <button onclick="addGridColumn()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 flex items-center gap-1"><i class="fa-solid fa-plus text-[10px]"></i> Kolom</button>
+                            <button onclick="deleteGridRow()" class="px-2.5 py-1 bg-rose-950/80 hover:bg-rose-900 text-rose-300 hover:text-rose-100 rounded-lg border border-rose-800 flex items-center gap-1"><i class="fa-solid fa-trash text-[10px]"></i> - Baris</button>
+                            <button onclick="deleteGridColumn()" class="px-2.5 py-1 bg-rose-950/80 hover:bg-rose-900 text-rose-300 hover:text-rose-100 rounded-lg border border-rose-800 flex items-center gap-1"><i class="fa-solid fa-trash text-[10px]"></i> - Kolom</button>
+                            <div class="h-4 w-px bg-slate-800 mx-0.5"></div>
+                            <button id="btn-undo" onclick="undoGridChange()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg border border-slate-700 flex items-center gap-1 transition-all"><i class="fa-solid fa-rotate-left text-[10px]"></i> Undo</button>
+                            <button id="btn-redo" onclick="redoGridChange()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg border border-slate-700 flex items-center gap-1 transition-all"><i class="fa-solid fa-rotate-right text-[10px]"></i> Redo</button>
+                            <div class="h-4 w-px bg-slate-800 mx-0.5"></div>
+                            <button id="btn-toggle-wrap" onclick="toggleWrapText()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 flex items-center gap-1 transition-colors"><i class="fa-solid fa-turn-down text-[10px]"></i> <span id="label-wrap-text">Wrap Text</span></button>
+                            <button onclick="autoFitColumns()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 flex items-center gap-1"><i class="fa-solid fa-arrows-left-right-to-line text-[10px]"></i> AutoFit</button>
+                            <div class="h-4 w-px bg-slate-800 mx-0.5"></div>
+                            <button onclick="exportToCSV()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 flex items-center gap-1"><i class="fa-solid fa-file-csv text-[10px]"></i> CSV</button>
+                        </div>
+                    </div>
+
+                    <!-- Grid Table Area -->
+                    <div class="flex-1 overflow-auto relative p-2" id="grid-scroll-area">
+                        <table id="sheet-table" class="border-collapse w-full bg-slate-900 text-xs font-mono text-slate-200"></table>
+                    </div>
+                </div>
+
+                <!-- Google Embed Iframe Mode -->
+                <div id="container-iframe-editor" class="flex-1 hidden relative w-full h-full bg-slate-900">
+                    <iframe id="google-sheet-iframe" class="w-full h-full border-0" src="about:blank" allow="clipboard-read; clipboard-write"></iframe>
+                    <div class="absolute bottom-4 right-4 bg-slate-900/95 backdrop-blur border border-slate-700 p-3 rounded-2xl shadow-2xl max-w-xs w-full">
+                        <div class="text-[11px] text-slate-400 mb-1 flex items-center justify-between">
+                            <span><i class="fa-solid fa-pen-nib text-emerald-400"></i> Activity Keystroke Tracker</span>
+                            <span class="text-[10px] text-emerald-400 font-mono">Live</span>
+                        </div>
+                        <input type="text" id="iframe-typing-tracker" oninput="registerActivityKeystroke(event)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100 outline-none focus:border-emerald-500 font-mono" placeholder="Ketik di sini jika iframe terkunci...">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Status Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 px-4 py-1.5 flex flex-wrap items-center justify-between text-xs text-slate-400 shrink-0">
+        <div class="flex items-center gap-3">
+            <div id="status-pill" class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-400 font-semibold text-[11px]">
+                <span id="status-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="status-text">🟢 Aktif Mengetik</span>
+            </div>
+            <span id="status-info-text" class="text-slate-400 truncate max-w-xs sm:max-w-md text-[11px]">SIP-STAF Terhubung & Pengawasan Pengetikan Aktif.</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-[11px]">
+            <span id="sync-status-badge" class="flex items-center gap-1 text-emerald-400"><i class="fa-solid fa-cloud-arrow-up"></i> Tersimpan Lokal & Sheets Sync</span>
+            <span id="clock-display" class="font-mono text-slate-300">00:00:00</span>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: Tambah Staf Pengetik Baru -->
+    <div id="modal-add-staff" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeAddStaffModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+
+            <h3 class="text-lg font-bold text-white mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-user-plus text-emerald-400"></i> Registrasi Staf Pengetik Baru
+            </h3>
+            <p class="text-xs text-slate-400 mb-4">Tambahkan profil staf pemerintah, NIP, unit kerja, serta kode PIN sandi akses.</p>
+
+            <form id="form-add-staff" onsubmit="handleStaffSubmit(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block text-slate-300 font-medium mb-1">Nama Lengkap Staf Operator *</label>
+                    <input type="text" id="input-staff-name" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none focus:border-emerald-500" placeholder="Contoh: Budi Santoso, S.Kom">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-slate-300 font-medium mb-1">NIP (Nomor Induk Pegawai) *</label>
+                        <input type="text" id="input-staff-nip" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none focus:border-emerald-500 font-mono text-[11px]" placeholder="199203102021021001">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 font-medium mb-1">Unit Kerja / Sub-Bagian *</label>
+                        <select id="input-staff-unit" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none focus:border-emerald-500">
+                            <option value="Sekretariat">Sekretariat</option>
+                            <option value="Bagian Umum" selected>Bagian Umum</option>
+                            <option value="Keuangan">Keuangan</option>
+                            <option value="Perencanaan">Perencanaan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 font-medium mb-1">Jabatan / Posisi Staf *</label>
+                    <input type="text" id="input-staff-role" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none focus:border-emerald-500" placeholder="Contoh: Pengolah Data Naskah Dinas II">
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 font-medium mb-1">Kode PIN Akses / Sandi Staf *</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="input-staff-code" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none focus:border-emerald-500 font-mono text-emerald-400 font-bold" placeholder="Contoh: OP-849201">
+                        <button type="button" onclick="generateRandomAccessCode()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 font-medium rounded-xl border border-slate-700 shrink-0 text-xs flex items-center gap-1">
+                            <i class="fa-solid fa-dice"></i> Acak PIN
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 font-medium mb-1">Target Entri Kata Naskah / Shift</label>
+                    <input type="number" id="input-staff-target" value="600" min="100" max="10000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none focus:border-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 font-medium mb-1">URL Google Sheets *</label>
+                    <input type="url" id="input-staff-sheet-url" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none focus:border-emerald-500 font-mono text-slate-300 text-[11px]" placeholder="https://docs.google.com/spreadsheets/d/...">
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeAddStaffModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl shadow">Simpan & Buka Workspace</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Apps Script Guide -->
+    <div id="modal-appsscript" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-2xl p-6 shadow-2xl relative">
+            <button onclick="closeAppsScriptModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+
+            <h3 class="text-lg font-bold text-white mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-cloud-arrow-up text-emerald-400"></i> Integrasi Google Apps Script Backend Webhook
+            </h3>
+            <p class="text-xs text-slate-400 mb-3">Gunakan berkas <code class="text-emerald-400">code.gs</code> untuk mengaktifkan sinkronisasi dua arah secara langsung dengan Google Sheets.</p>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 mb-3 relative font-mono text-[11px] text-emerald-300 overflow-x-auto">
+                <button onclick="copyAppsScriptCode()" class="absolute top-2 right-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-md border border-slate-700">
+                    <i class="fa-solid fa-copy mr-1"></i> Salin Kode
+                </button>
+<pre id="appscript-code-block">function doPost(e) {
+  try {
+    var contents = JSON.parse(e.postData.contents);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    sheet.clear();
+    for (var i = 0; i < contents.rows.length; i++) {
+      sheet.appendRow(contents.rows[i]);
+    }
+    return ContentService.createTextOutput(JSON.stringify({status: "success"}))
+           .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({status: "error", message: err.toString()}))
+           .setMimeType(ContentService.MimeType.JSON);
+  }
+}</pre>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+                <button type="button" onclick="closeAppsScriptModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-xl">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Confirm Modal -->
+    <div id="modal-confirm" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeConfirmModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+
+            <div class="flex items-center gap-3 mb-3">
+                <div id="confirm-icon-container" class="w-10 h-10 rounded-2xl bg-rose-950 border border-rose-800 text-rose-400 flex items-center justify-center shrink-0">
+                    <i id="confirm-icon" class="fa-solid fa-triangle-exclamation text-lg"></i>
+                </div>
+                <div>
+                    <h3 id="confirm-title" class="text-base font-bold text-white leading-tight">Peringatan Konfirmasi</h3>
+                    <p id="confirm-subtitle" class="text-xs text-slate-400">Tindakan ini tidak dapat dibatalkan.</p>
+                </div>
+            </div>
+
+            <p id="confirm-message" class="text-xs text-slate-300 mb-5 leading-relaxed bg-slate-950/60 p-3 rounded-xl border border-slate-800/80"></p>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-xl">Batal</button>
+                <button id="btn-confirm-action" type="button" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs rounded-xl shadow">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Staff Access PIN Login -->
+    <div id="modal-staff-login" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-sm p-6 shadow-2xl relative">
+            <button onclick="closeStaffLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+
+            <div class="text-center mb-4">
+                <div id="login-avatar-badge" class="w-12 h-12 mx-auto rounded-2xl bg-emerald-600 text-white font-bold text-lg flex items-center justify-center mb-2 shadow-lg shadow-emerald-950/50">
+                    OP
+                </div>
+                <h3 id="login-staff-name" class="text-base font-bold text-white">Otorisasi PIN Staf</h3>
+                <p id="login-staff-role" class="text-xs text-slate-400">Masukkan PIN sandi akses untuk membikinkan workspace.</p>
+            </div>
+
+            <form id="form-staff-login" onsubmit="handleStaffLoginSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-slate-300 font-medium mb-1 text-center">Kode PIN Sandi Akses</label>
+                    <input type="password" id="input-login-code" required class="w-full text-center bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-emerald-400 font-mono font-bold text-base outline-none focus:border-emerald-500 tracking-widest" placeholder="••••••">
+                </div>
+
+                <div id="login-error-msg" class="hidden text-rose-400 text-[11px] text-center font-medium bg-rose-950/60 p-2 rounded-xl border border-rose-800/60">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Kode PIN salah! Silakan coba lagi.
+                </div>
+
+                <div class="space-y-2 pt-1">
+                    <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-key"></i> Verifikasi PIN & Masuk Workspace
+                    </button>
+                    <button type="button" onclick="loginByAdminBypass()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white font-medium text-[11px] rounded-xl transition-colors">
+                        <i class="fa-solid fa-user-shield mr-1"></i> Masuk Sebagai Pengawas Admin (Bypass)
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 5: Cetak Berita Acara Rekap Kinerja Staf -->
+    <div id="modal-print-report" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-3xl p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+            <button onclick="closePrintReportModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+
+            <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-print text-amber-400"></i> Pratinjau Berita Acara Hasil Pengawasan Pengetikan Staf
+                </h3>
+                <button onclick="window.print()" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow">
+                    <i class="fa-solid fa-print"></i> Cetak / Simpan PDF
+                </button>
+            </div>
+
+            <!-- Print Printable Content -->
+            <div class="flex-1 overflow-y-auto bg-white text-black p-6 rounded-2xl shadow-inner font-sans text-xs space-y-4" id="print-report-area">
+                <div class="text-center border-b-2 border-black pb-3">
+                    <h2 class="text-sm font-bold uppercase tracking-wide">PEMERINTAH REPUBLIK INDONESIA</h2>
+                    <h1 class="text-base font-extrabold uppercase tracking-wider">BERITA ACARA REKAPITULASI HASIL PENGAWASAN PENGETIKAN STAF</h1>
+                    <p class="text-[10px] text-gray-600">Sistem Informasi Pengawasan Pengetikan Naskah Dinas (SIP-STAF)</p>
+                </div>
+
+                <div class="flex justify-between text-[11px]">
+                    <div>
+                        <p><strong>Tanggal Pengawasan:</strong> <span id="report-date-str">15 September 2026</span></p>
+                        <p><strong>Status Sistem:</strong> Resmi / Aktif (Pengawasan Terdaftar)</p>
+                    </div>
+                    <div class="text-right">
+                        <p><strong>Total Staf Terdaftar:</strong> <span id="report-staff-count">0</span> Orang</p>
+                        <p><strong>Tingkat Efisiensi Rata-rata:</strong> <span id="report-efficiency-score">0%</span></p>
+                    </div>
+                </div>
+
+                <table class="w-full border-collapse border border-gray-400 text-[10px]">
+                    <thead>
+                        <tr class="bg-gray-100 font-bold text-center">
+                            <th class="border border-gray-400 p-1.5">No</th>
+                            <th class="border border-gray-400 p-1.5">Nama Staf & NIP</th>
+                            <th class="border border-gray-400 p-1.5">Unit Kerja</th>
+                            <th class="border border-gray-400 p-1.5">Durasi Aktif</th>
+                            <th class="border border-gray-400 p-1.5">Durasi Inaktif</th>
+                            <th class="border border-gray-400 p-1.5">Kata Naskah</th>
+                            <th class="border border-gray-400 p-1.5">Target Shift</th>
+                            <th class="border border-gray-400 p-1.5">Efisiensi %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-table-tbody"></tbody>
+                </table>
+
+                <div class="mt-8 pt-6 grid grid-cols-2 gap-8 text-center text-[11px]">
+                    <div>
+                        <p>Atasan / Supervisor Pengawas,</p>
+                        <div class="h-16"></div>
+                        <p class="font-bold underline">(..........................................................)</p>
+                        <p class="text-[9px] text-gray-500">NIP. .................................................</p>
+                    </div>
+                    <div>
+                        <p>Petugas Administrator SIP-STAF,</p>
+                        <div class="h-16"></div>
+                        <p class="font-bold underline">(..........................................................)</p>
+                        <p class="text-[9px] text-gray-500">NIP. .................................................</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        const DEFAULT_STAFF_DATA = [
+            {
+                id: 'op-1',
+                name: 'Budi Santoso, S.Kom',
+                nip: '199203102021021001',
+                unitKerja: 'Bagian Umum',
+                role: 'Operator Data Entry Utama',
+                accessCode: 'OP-849201',
+                targetWords: 600,
+                sheetUrl: 'https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit',
+                webAppUrl: '',
+                activeSeconds: 1420,
+                idleSeconds: 180,
+                wordsTyped: 340,
+                wrapText: false,
+                classification: 'TERBATAS',
+                initialData: [
+                    ["No", "Kode Naskah", "Perihal Surat / Dokumen", "Kategori", "Jumlah Halaman", "Sifat Dokumen", "Status Sync"],
+                    ["1", "NSK-001", "Laporan Rekapitulasi Sarpras Q3", "Naskah Dinas", "25", "TERBATAS", "Tersimpan Google"],
+                    ["2", "NSK-002", "Daftar Inventaris Kendaraan Dinas", "Logistik", "14", "BIASA", "Tersimpan Google"],
+                    ["3", "NSK-003", "Notulen Rapat Koordinasi Anggaran", "Sekretariat", "8", "RAHASIA", "Tersimpan Google"],
+                    ["4", "NSK-004", "Surat Perintah Tugas (SPT) Staf", "Kepegawaian", "3", "BIASA", "Tersimpan Google"],
+                    ["5", "NSK-005", "Daftar Kehadiran Rapat Pleno", "Umum", "5", "BIASA", "Tersimpan Google"]
+                ]
+            },
+            {
+                id: 'op-2',
+                name: 'Siti Rahma, A.Md',
+                nip: '199507142022032004',
+                unitKerja: 'Sekretariat',
+                role: 'Staf Transkripsi & Laporan',
+                accessCode: 'OP-392104',
+                targetWords: 500,
+                sheetUrl: 'https://docs.google.com/spreadsheets/d/1234567890abcdef-sample2/edit',
+                webAppUrl: '',
+                activeSeconds: 980,
+                idleSeconds: 420,
+                wordsTyped: 210,
+                wrapText: false,
+                classification: 'BIASA',
+                initialData: [
+                    ["Tanggal", "Nama Klien / Instansi", "Jenis Layanan", "Operator", "Durasi (Jam)", "Catatan Status"],
+                    ["2026-09-10", "Dinas Pendidikan", "Input Data Verifikasi", "Siti Rahma", "4.5", "Selesai Verifikasi"],
+                    ["2026-09-11", "Badan Keuangan", "Audit Rekap Anggaran", "Siti Rahma", "6.0", "Menunggu TTD"],
+                    ["2026-09-12", "Inspektorat", "Pendataan Berkas Audit", "Siti Rahma", "3.0", "Selesai"]
+                ]
+            },
+            {
+                id: 'op-3',
+                name: 'Agus Pratama, S.T.',
+                nip: '199011052019011002',
+                unitKerja: 'Keuangan',
+                role: 'Operator Inventaris & Logistik',
+                accessCode: 'OP-582039',
+                targetWords: 750,
+                sheetUrl: 'https://docs.google.com/spreadsheets/d/1234567890abcdef-sample3/edit',
+                webAppUrl: '',
+                activeSeconds: 450,
+                idleSeconds: 890,
+                wordsTyped: 110,
+                wrapText: false,
+                classification: 'RAHASIA',
+                initialData: [
+                    ["ID Rak", "Kode Gudang", "Barang Masuk", "Jumlah Unit", "Petugas QC", "Tanggal QC"],
+                    ["R-01-A", "GDG-WEST", "Laptop Pengadaan BKN", "25", "Agus Pratama", "2026-09-14"],
+                    ["R-01-B", "GDG-WEST", "Monitor LED Office 24 Inc", "40", "Agus Pratama", "2026-09-14"]
+                ]
+            }
+        ];
+
+        let staffList = [];
+        let activeStaffId = 'op-1';
+        let pendingLoginStaffId = null;
+        let visiblePasscodes = {};
+        let idleTimeoutSeconds = 30;
+        let lastActivityTime = Date.now();
+        let isCurrentlyIdle = false;
+        let currentMode = 'native';
+        let currentTimeframe = 'daily';
+        let selectedUnitFilter = 'ALL';
+        let navigationHistory = [];
+        let historyIndex = -1;
+        let selectedRowIndex = 0;
+        let selectedColIndex = 0;
+
+        let undoStack = [];
+        let redoStack = [];
+
+        let chartActiveIdle = null;
+        let chartStatusPie = null;
+        let chartWordsProgress = null;
+
+        const THEME_LABELS = {
+            'dark-emerald': 'Executive Emerald',
+            'garuda-red': 'Garuda Merah Putih',
+            'midnight-blue': 'Midnight Navy (BKN)',
+            'cyber-purple': 'Cyber Purple State',
+            'clean-light': 'Paper Clean Light'
+        };
+
+        const THEME_ICONS_COLOR = {
+            'dark-emerald': 'text-emerald-400',
+            'garuda-red': 'text-rose-500',
+            'midnight-blue': 'text-blue-400',
+            'cyber-purple': 'text-purple-400',
+            'clean-light': 'text-sky-600'
+        };
+
+        function changeAppTheme(themeName) {
+            if (!THEME_LABELS[themeName]) themeName = 'dark-emerald';
+            
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('sipstaf_app_theme', themeName);
+
+            const selectEl = document.getElementById('theme-select');
+            if (selectEl) selectEl.value = themeName;
+
+            const iconEl = document.getElementById('theme-icon');
+            if (iconEl) {
+                iconEl.className = `fa-solid fa-palette text-xs ${THEME_ICONS_COLOR[themeName] || 'text-emerald-400'}`;
+            }
+
+            if (typeof initOrUpdateAdminCharts === 'function') {
+                initOrUpdateAdminCharts();
+            }
+
+            showToast(`Tema aplikasi diubah ke ${THEME_LABELS[themeName]}`, 'success');
+        }
+
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('sipstaf_app_theme') || 'dark-emerald';
+            changeAppTheme(savedTheme);
+        }
+
+        function loadStaffDataFromStorage() {
+            try {
+                const stored = localStorage.getItem('sipstaf_app_staff_v5');
+                if (stored) {
+                    staffList = JSON.parse(stored);
+                } else {
+                    staffList = JSON.parse(JSON.stringify(DEFAULT_STAFF_DATA));
+                }
+            } catch(e) {
+                staffList = JSON.parse(JSON.stringify(DEFAULT_STAFF_DATA));
+            }
+
+            staffList.forEach(staff => {
+                if (!staff.accessCode) {
+                    staff.accessCode = `OP-${Math.floor(100000 + Math.random() * 900000)}`;
+                }
+                if (!staff.nip) {
+                    staff.nip = `199${Math.floor(10000000000000 + Math.random() * 90000000000000)}`;
+                }
+                if (!staff.unitKerja) {
+                    staff.unitKerja = 'Bagian Umum';
+                }
+            });
+        }
+
+        function saveStaffDataToStorage() {
+            try {
+                localStorage.setItem('sipstaf_app_staff_v5', JSON.stringify(staffList));
+            } catch(e) {
+                console.error("Storage save failed", e);
+            }
+        }
+
+        function switchMainView(view) {
+            const navHome = document.getElementById('nav-btn-home');
+            const navAdmin = document.getElementById('nav-btn-admin');
+            const navBrowser = document.getElementById('nav-btn-browser');
+
+            const viewHome = document.getElementById('view-home');
+            const viewAdmin = document.getElementById('view-admin');
+            const viewBrowser = document.getElementById('view-browser');
+
+            const activeClass = "px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-emerald-600 text-white shadow flex items-center gap-1.5 transition-all";
+            const inactiveClass = "px-3.5 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition-all";
+
+            viewHome.classList.add('hidden');
+            viewAdmin.classList.add('hidden');
+            viewBrowser.classList.add('hidden');
+
+            navHome.className = inactiveClass;
+            navAdmin.className = inactiveClass;
+            navBrowser.className = inactiveClass;
+
+            if (view === 'home') {
+                viewHome.classList.remove('hidden');
+                navHome.className = activeClass;
+                renderHomePortal();
+            } else if (view === 'admin') {
+                viewAdmin.classList.remove('hidden');
+                navAdmin.className = activeClass;
+                renderAdminDashboard();
+            } else {
+                viewBrowser.classList.remove('hidden');
+                navBrowser.className = activeClass;
+            }
+        }
+
+        function switchEditorMode(mode) {
+            currentMode = mode;
+            const containerNative = document.getElementById('container-native-editor');
+            const containerIframe = document.getElementById('container-iframe-editor');
+            const btnNative = document.getElementById('btn-mode-native');
+            const btnIframe = document.getElementById('btn-mode-iframe');
+
+            if (mode === 'native') {
+                containerNative.classList.remove('hidden');
+                containerIframe.classList.add('hidden');
+                btnNative.className = "px-3 py-1 text-xs rounded-lg bg-emerald-600 text-white font-medium flex items-center gap-1.5 transition-all shadow";
+                btnIframe.className = "px-3 py-1 text-xs rounded-lg text-slate-400 hover:text-white font-medium flex items-center gap-1.5 transition-all";
+            } else {
+                containerNative.classList.add('hidden');
+                containerIframe.classList.remove('hidden');
+                btnIframe.className = "px-3 py-1 text-xs rounded-lg bg-emerald-600 text-white font-medium flex items-center gap-1.5 transition-all shadow";
+                btnNative.className = "px-3 py-1 text-xs rounded-lg text-slate-400 hover:text-white font-medium flex items-center gap-1.5 transition-all";
+            }
+        }
+
+        function renderHomePortal() {
+            const grid = document.getElementById('home-staff-grid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+            let activeCount = 0;
+            let idleCount = 0;
+            let totalWords = 0;
+
+            staffList.forEach(staff => {
+                totalWords += staff.wordsTyped;
+                const isThisStaffSelected = staff.id === activeStaffId;
+                const isStaffIdle = isThisStaffSelected ? isCurrentlyIdle : (staff.idleSeconds > staff.activeSeconds);
+                if (isStaffIdle) idleCount++;
+                else activeCount++;
+
+                const card = document.createElement('div');
+                card.className = "glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col justify-between hover:border-emerald-500/50 transition-all";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white font-bold text-sm flex items-center justify-center shadow">
+                                    ${staff.name.substring(0, 2).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div class="font-bold text-slate-100 text-xs">${staff.name}</div>
+                                    <div class="text-[10px] font-mono text-emerald-400">NIP. ${staff.nip}</div>
+                                </div>
+                            </div>
+                            ${!isStaffIdle ? 
+                                `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">🟢 Aktif</span>` : 
+                                `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-950 text-amber-400 border border-amber-800">🟡 Inaktif</span>`
+                            }
+                        </div>
+                        <div class="space-y-1 text-[11px] text-slate-300 mb-4 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Unit Kerja:</span>
+                                <span class="font-semibold text-slate-200">${staff.unitKerja || 'Bagian Umum'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Posisi:</span>
+                                <span class="text-slate-300 truncate max-w-[150px]">${staff.role}</span>
+                            </div>
+                            <div class="flex justify-between font-mono">
+                                <span class="text-slate-400">Kata Diketik:</span>
+                                <span class="text-emerald-400 font-bold">${staff.wordsTyped} / ${staff.targetWords}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+                        <button onclick="requestSwitchStaff('${staff.id}')" class="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs transition-colors text-center">
+                            <i class="fa-solid fa-key mr-1"></i> Buka Workspace
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('home-total-staff').textContent = staffList.length;
+            document.getElementById('home-active-staff').textContent = activeCount;
+            document.getElementById('home-idle-staff').textContent = idleCount;
+            document.getElementById('home-total-words').textContent = totalWords;
+        }
+
+        function renderStaffCards() {
+            const container = document.getElementById('staff-cards-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            staffList.forEach(staff => {
+                const isActive = staff.id === activeStaffId;
+                const card = document.createElement('button');
+                card.onclick = () => requestSwitchStaff(staff.id);
+                card.className = `flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium shrink-0 transition-all ${
+                    isActive 
+                    ? 'bg-emerald-950/80 border-emerald-500 text-emerald-300 shadow-md shadow-emerald-950/50 ring-1 ring-emerald-500' 
+                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                }`;
+
+                card.innerHTML = `
+                    <div class="w-5 h-5 rounded-full ${isActive ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-300'} text-[10px] flex items-center justify-center">
+                        ${staff.name.substring(0, 2).toUpperCase()}
+                    </div>
+                    <span class="truncate max-w-[120px] sm:max-w-none">${staff.name.split(' ')[0]}</span>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function requestSwitchStaff(staffId) {
+            if (staffId === activeStaffId) {
+                switchMainView('browser');
+                return;
+            }
+            openStaffLoginModal(staffId);
+        }
+
+        function openStaffLoginModal(staffId) {
+            const staff = staffList.find(s => s.id === staffId);
+            if (!staff) return;
+
+            pendingLoginStaffId = staffId;
+            document.getElementById('login-staff-name').textContent = staff.name;
+            document.getElementById('login-staff-role').textContent = `${staff.nip} - ${staff.unitKerja || ''}`;
+            document.getElementById('login-avatar-badge').textContent = staff.name.substring(0, 2).toUpperCase();
+            document.getElementById('input-login-code').value = '';
+            document.getElementById('login-error-msg').classList.add('hidden');
+            
+            document.getElementById('modal-staff-login').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('input-login-code').focus();
+            }, 100);
+        }
+
+        function closeStaffLoginModal() {
+            document.getElementById('modal-staff-login').classList.add('hidden');
+            pendingLoginStaffId = null;
+        }
+
+        function handleStaffLoginSubmit(event) {
+            event.preventDefault();
+            const inputCode = document.getElementById('input-login-code').value.trim();
+            const staff = staffList.find(s => s.id === pendingLoginStaffId);
+
+            if (staff && inputCode === staff.accessCode) {
+                const targetId = pendingLoginStaffId;
+                closeStaffLoginModal();
+                setActiveStaff(targetId);
+                switchMainView('browser');
+                showToast(`Verifikasi PIN Berhasil! Selamat bekerja ${staff.name}`, 'success');
+            } else {
+                document.getElementById('login-error-msg').classList.remove('hidden');
+            }
+        }
+
+        function loginByAdminBypass() {
+            if (pendingLoginStaffId) {
+                const staff = staffList.find(s => s.id === pendingLoginStaffId);
+                const targetId = pendingLoginStaffId;
+                closeStaffLoginModal();
+                setActiveStaff(targetId);
+                switchMainView('browser');
+                showToast(`Bypass Admin: Masuk ke workspace ${staff ? staff.name : ''}`, 'info');
+            }
+        }
+
+        function generateRandomAccessCode() {
+            const randomDigits = Math.floor(100000 + Math.random() * 900000);
+            const code = `OP-${randomDigits}`;
+            const inputEl = document.getElementById('input-staff-code');
+            if (inputEl) inputEl.value = code;
+        }
+
+        function togglePasscodeVisibility(staffId) {
+            visiblePasscodes[staffId] = !visiblePasscodes[staffId];
+            renderAdminDashboard();
+        }
+
+        function copyStaffAccessCode(code) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = code;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast(`Kode PIN (${code}) disalin!`, 'success');
+        }
+
+        function updateDocClassification(val) {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (activeStaff) {
+                activeStaff.classification = val;
+                saveStaffDataToStorage();
+                showToast(`Klasifikasi Dokumen Diubah Ke: ${val}`, 'info');
+            }
+        }
+
+        function setActiveStaff(staffId, fetchRemote = true) {
+            activeStaffId = staffId;
+            const staff = staffList.find(s => s.id === staffId);
+            if (!staff) return;
+
+            undoStack = [];
+            redoStack = [];
+            updateUndoRedoButtonStates();
+
+            document.getElementById('active-staff-name').textContent = staff.name;
+            document.getElementById('active-staff-nip').textContent = `NIP. ${staff.nip || '-'}`;
+            document.getElementById('active-staff-role').textContent = `${staff.role} (${staff.unitKerja || 'Umum'})`;
+            document.getElementById('active-staff-words').textContent = staff.wordsTyped;
+            document.getElementById('active-staff-target').textContent = staff.targetWords;
+            document.getElementById('active-staff-avatar').textContent = staff.name.substring(0, 2).toUpperCase();
+            document.getElementById('url-address-bar').value = staff.sheetUrl || '';
+
+            const docClassSelect = document.getElementById('doc-classification');
+            if (docClassSelect) docClassSelect.value = staff.classification || 'TERBATAS';
+
+            updateWrapButtonState(staff.wrapText);
+
+            if (navigationHistory[historyIndex] !== staff.sheetUrl) {
+                navigationHistory = navigationHistory.slice(0, historyIndex + 1);
+                navigationHistory.push(staff.sheetUrl);
+                historyIndex = navigationHistory.length - 1;
+            }
+
+            renderStaffCards();
+            renderNativeSheetGrid(staff);
+            updateIframeSource(staff.sheetUrl);
+
+            if (fetchRemote && staff.sheetUrl && staff.sheetUrl.includes('google.com/spreadsheets')) {
+                fetchGoogleSheetDataCSV(staff.sheetUrl, staff);
+            }
+        }
+
+        function pushUndoState() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+            undoStack.push(JSON.parse(JSON.stringify(activeStaff.initialData)));
+            redoStack = [];
+            updateUndoRedoButtonStates();
+        }
+
+        function undoGridChange() {
+            if (undoStack.length === 0) return;
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            redoStack.push(JSON.parse(JSON.stringify(activeStaff.initialData)));
+            activeStaff.initialData = undoStack.pop();
+            renderNativeSheetGrid(activeStaff);
+            saveStaffDataToStorage();
+            updateUndoRedoButtonStates();
+            showToast('Urungkan (Undo) Perubahan', 'info');
+        }
+
+        function redoGridChange() {
+            if (redoStack.length === 0) return;
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            undoStack.push(JSON.parse(JSON.stringify(activeStaff.initialData)));
+            activeStaff.initialData = redoStack.pop();
+            renderNativeSheetGrid(activeStaff);
+            saveStaffDataToStorage();
+            updateUndoRedoButtonStates();
+            showToast('Ulangi (Redo) Perubahan', 'info');
+        }
+
+        function updateUndoRedoButtonStates() {
+            const btnUndo = document.getElementById('btn-undo');
+            const btnRedo = document.getElementById('btn-redo');
+            if (btnUndo) btnUndo.disabled = undoStack.length === 0;
+            if (btnRedo) btnRedo.disabled = redoStack.length === 0;
+        }
+
+        function getColumnName(index) {
+            let colName = '';
+            while (index >= 0) {
+                colName = String.fromCharCode((index % 26) + 65) + colName;
+                index = Math.floor(index / 26) - 1;
+            }
+            return colName;
+        }
+
+        function renderNativeSheetGrid(staff) {
+            const table = document.getElementById('sheet-table');
+            if (!table) return;
+
+            table.innerHTML = '';
+            const data = staff.initialData || [["A1", "B1"], ["A2", "B2"]];
+            const isWrap = !!staff.wrapText;
+
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            headerRow.className = "bg-slate-950 text-slate-400 font-semibold border-b border-slate-800 sticky top-0 z-20";
+
+            const cornerTh = document.createElement('th');
+            cornerTh.className = "w-10 p-2 text-center border-r border-slate-800 bg-slate-950 font-mono text-[10px]";
+            cornerTh.textContent = "#";
+            headerRow.appendChild(cornerTh);
+
+            const numCols = Math.max(...data.map(r => r.length), 1);
+            for (let c = 0; c < numCols; c++) {
+                const th = document.createElement('th');
+                th.className = "p-2 border-r border-slate-800 text-center font-mono font-medium text-emerald-400 min-w-[120px]";
+                th.textContent = getColumnName(c);
+                headerRow.appendChild(th);
+            }
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            tbody.className = "divide-y divide-slate-800/80";
+
+            data.forEach((row, rIdx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/30 transition-colors";
+
+                const rowTd = document.createElement('td');
+                rowTd.className = "bg-slate-950 text-slate-500 font-mono text-[10px] text-center border-r border-slate-800 font-semibold select-none";
+                rowTd.textContent = rIdx + 1;
+                tr.appendChild(rowTd);
+
+                for (let cIdx = 0; cIdx < numCols; cIdx++) {
+                    const td = document.createElement('td');
+                    const cellValue = row[cIdx] !== undefined ? row[cIdx] : '';
+
+                    td.className = `p-1 border-r border-slate-800/60 sheet-cell outline-none focus:bg-emerald-950/40 ${
+                        isWrap ? 'whitespace-normal break-words' : 'whitespace-nowrap overflow-hidden text-ellipsis'
+                    } ${rIdx === 0 ? 'font-semibold text-emerald-200 bg-slate-950/40' : 'text-slate-200'}`;
+
+                    td.contentEditable = "true";
+                    td.dataset.row = rIdx;
+                    td.dataset.col = cIdx;
+                    td.textContent = cellValue;
+
+                    td.onfocus = function() {
+                        selectedRowIndex = rIdx;
+                        selectedColIndex = cIdx;
+                        const cellId = `${getColumnName(cIdx)}${rIdx + 1}`;
+                        document.getElementById('selected-cell-id').textContent = cellId;
+                        document.getElementById('formula-bar').value = cellValue;
+                    };
+
+                    td.oninput = function(e) {
+                        registerActivityKeystroke(e);
+                        handleCellInput(rIdx, cIdx, this.textContent);
+                    };
+
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(tbody);
+        }
+
+        function handleCellInput(rIdx, cIdx, value) {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            pushUndoState();
+
+            while (activeStaff.initialData.length <= rIdx) {
+                activeStaff.initialData.push([]);
+            }
+            activeStaff.initialData[rIdx][cIdx] = value;
+            document.getElementById('formula-bar').value = value;
+            saveStaffDataToStorage();
+        }
+
+        function handleFormulaInput(value) {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            const table = document.getElementById('sheet-table');
+            if (!table) return;
+
+            const cell = table.querySelector(`[data-row="${selectedRowIndex}"][data-col="${selectedColIndex}"]`);
+            if (cell) {
+                pushUndoState();
+                cell.textContent = value;
+                handleCellInput(selectedRowIndex, selectedColIndex, value);
+            }
+        }
+
+        function addGridRow() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            pushUndoState();
+            const numCols = activeStaff.initialData[0] ? activeStaff.initialData[0].length : 5;
+            const newRow = new Array(numCols).fill('');
+            activeStaff.initialData.push(newRow);
+            renderNativeSheetGrid(activeStaff);
+            saveStaffDataToStorage();
+            showToast('Baris Baru Ditambahkan', 'success');
+        }
+
+        function addGridColumn() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            pushUndoState();
+            activeStaff.initialData.forEach(row => row.push(''));
+            renderNativeSheetGrid(activeStaff);
+            saveStaffDataToStorage();
+            showToast('Kolom Baru Ditambahkan', 'success');
+        }
+
+        function deleteGridRow() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff || activeStaff.initialData.length <= 1) {
+                showToast('Tidak dapat menghapus baris terakhir!', 'error');
+                return;
+            }
+
+            pushUndoState();
+            activeStaff.initialData.splice(selectedRowIndex, 1);
+            if (selectedRowIndex >= activeStaff.initialData.length) {
+                selectedRowIndex = Math.max(0, activeStaff.initialData.length - 1);
+            }
+            renderNativeSheetGrid(activeStaff);
+            saveStaffDataToStorage();
+            showToast(`Baris ke-${selectedRowIndex + 1} Dihapus`, 'info');
+        }
+
+        function deleteGridColumn() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+            const numCols = activeStaff.initialData[0] ? activeStaff.initialData[0].length : 0;
+            if (numCols <= 1) {
+                showToast('Tidak dapat menghapus kolom terakhir!', 'error');
+                return;
+            }
+
+            pushUndoState();
+            activeStaff.initialData.forEach(row => row.splice(selectedColIndex, 1));
+            if (selectedColIndex >= activeStaff.initialData[0].length) {
+                selectedColIndex = Math.max(0, activeStaff.initialData[0].length - 1);
+            }
+            renderNativeSheetGrid(activeStaff);
+            saveStaffDataToStorage();
+            showToast(`Kolom ${getColumnName(selectedColIndex)} Dihapus`, 'info');
+        }
+
+        function toggleWrapText() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            activeStaff.wrapText = !activeStaff.wrapText;
+            updateWrapButtonState(activeStaff.wrapText);
+            renderNativeSheetGrid(activeStaff);
+            saveStaffDataToStorage();
+            showToast(`Wrap Text: ${activeStaff.wrapText ? 'Aktif' : 'Non-Aktif'}`, 'info');
+        }
+
+        function updateWrapButtonState(isWrap) {
+            const btn = document.getElementById('btn-toggle-wrap');
+            const label = document.getElementById('label-wrap-text');
+            if (!btn || !label) return;
+
+            if (isWrap) {
+                btn.className = "px-2.5 py-1 bg-emerald-600 text-white rounded-lg border border-emerald-500 flex items-center gap-1 transition-colors shadow";
+                label.textContent = "Wrap: ON";
+            } else {
+                btn.className = "px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 flex items-center gap-1 transition-colors";
+                label.textContent = "Wrap Text";
+            }
+        }
+
+        function autoFitColumns() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            renderNativeSheetGrid(activeStaff);
+            showToast('Penyesuaian Lebar Kolom Selesai', 'success');
+        }
+
+        function exportToCSV() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            let csv = '';
+            activeStaff.initialData.forEach(row => {
+                const escapedRow = row.map(cell => `"${(cell || '').replace(/"/g, '""')}"`);
+                csv += escapedRow.join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Naskah_${activeStaff.name.replace(/\s+/g, '_')}_data.csv`;
+            link.click();
+            showToast('Berkas Naskah CSV Berhasil Diunduh!', 'success');
+        }
+
+        function fetchGoogleSheetDataCSV(sheetUrl, staff) {
+            if (!sheetUrl) return;
+
+            showLoadingBar();
+
+            if (sheetUrl.includes('script.google.com')) {
+                const readApiUrl = sheetUrl.includes('?') ? `${sheetUrl}&action=read` : `${sheetUrl}?action=read`;
+                fetch(readApiUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.status === 'success' && Array.isArray(data.rows) && data.rows.length > 0) {
+                            staff.initialData = data.rows;
+                            if (staff.id === activeStaffId) {
+                                renderNativeSheetGrid(staff);
+                            }
+                            saveStaffDataToStorage();
+                            showToast(`Data naskah ditarik via Apps Script Webhook (${data.rows.length} baris)!`, 'success');
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Gagal menarik data via Web App API:", err);
+                    });
+                return;
+            }
+
+            if (sheetUrl.includes('google.com/spreadsheets')) {
+                const match = sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+                if (!match || !match[1]) return;
+
+                const spreadsheetId = match[1];
+                const csvExportUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv`;
+
+                fetch(csvExportUrl)
+                    .then(res => res.text())
+                    .then(csvText => {
+                        const rows = parseCSVToRows(csvText);
+                        if (rows && rows.length > 0) {
+                            staff.initialData = rows;
+                            if (staff.id === activeStaffId) {
+                                renderNativeSheetGrid(staff);
+                            }
+                            saveStaffDataToStorage();
+                            showToast(`Data Google Sheets berhasil dimuat (${rows.length} baris)!`, 'success');
+                        }
+                    })
+                    .catch(err => {
+                        console.log("Could not auto-fetch CSV directly:", err);
+                    });
+            }
+        }
+
+        function parseCSVToRows(csvText) {
+            const lines = csvText.split(/\r\n|\n/);
+            const result = [];
+            lines.forEach(line => {
+                if (!line.trim()) return;
+                const regex = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*)/g;
+                const row = [];
+                let match;
+                while ((match = regex.exec(line)) !== null) {
+                    let val = match[1];
+                    if (val.startsWith('"') && val.endsWith('"')) {
+                        val = val.substring(1, val.length - 1).replace(/""/g, '"');
+                    }
+                    row.push(val);
+                }
+                if (row.length > 0) result.push(row);
+            });
+            return result;
+        }
+
+        function updateIframeSource(url) {
+            const iframe = document.getElementById('google-sheet-iframe');
+            if (!iframe) return;
+
+            if (url && url.includes('script.google.com')) {
+                iframe.removeAttribute('src');
+                iframe.srcdoc = `
+                    <div style="background:#0f172a;color:#f8fafc;font-family:sans-serif;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;">
+                        <div style="font-size:36px;margin-bottom:12px;">⚡</div>
+                        <h3 style="color:#10b981;margin:0 0 8px 0;font-size:18px;">URL Webhook Apps Script Terdeteksi</h3>
+                        <p style="color:#94a3b8;font-size:13px;max-width:420px;line-height:1.5;">Gunakan mode <b>Native Sheet Editor</b> di atas untuk mengedit data secara interaktif.</p>
+                    </div>
+                `;
+            } else if (url && url.includes('google.com/spreadsheets')) {
+                iframe.removeAttribute('srcdoc');
+                let embedUrl = url;
+                if (!url.includes('/pubhtml') && !url.includes('/htmlview')) {
+                    embedUrl = url.replace(/\/edit.*$/, '/htmlview');
+                }
+                iframe.src = embedUrl;
+            } else {
+                iframe.removeAttribute('srcdoc');
+                iframe.src = 'about:blank';
+            }
+        }
+
+        function registerActivityKeystroke(e) {
+            lastActivityTime = Date.now();
+            isCurrentlyIdle = false;
+
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (activeStaff) {
+                activeStaff.wordsTyped += 1;
+                document.getElementById('active-staff-words').textContent = activeStaff.wordsTyped;
+            }
+        }
+
+        function updateIdleTimeoutSetting(val) {
+            idleTimeoutSeconds = parseInt(val, 10) || 30;
+            showToast(`Batas Inaktif Diubah: ${idleTimeoutSeconds} Detik`, 'info');
+        }
+
+        function formatHMS(totalSeconds) {
+            const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (totalSeconds % 60).toString().padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        function updateTimerDisplays() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            document.getElementById('timer-active-display').textContent = formatHMS(activeStaff.activeSeconds);
+            document.getElementById('timer-idle-display').textContent = formatHMS(activeStaff.idleSeconds);
+
+            const statusPill = document.getElementById('status-pill');
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+
+            if (isCurrentlyIdle) {
+                statusPill.className = "flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-950 border border-amber-800 text-amber-400 font-semibold text-[11px]";
+                statusDot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
+                statusText.textContent = "🟡 Inaktif / Melamun";
+            } else {
+                statusPill.className = "flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-400 font-semibold text-[11px]";
+                statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+                statusText.textContent = "🟢 Aktif Mengetik";
+            }
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString() + ' WIB';
+            document.getElementById('clock-display').textContent = timeStr;
+            const govClock = document.getElementById('gov-clock-display');
+            if (govClock) govClock.textContent = timeStr;
+        }
+
+        setInterval(() => {
+            const timeSinceLastInput = (Date.now() - lastActivityTime) / 1000;
+            isCurrentlyIdle = timeSinceLastInput >= idleTimeoutSeconds;
+
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (activeStaff) {
+                if (isCurrentlyIdle) {
+                    activeStaff.idleSeconds += 1;
+                } else {
+                    activeStaff.activeSeconds += 1;
+                }
+            }
+
+            updateTimerDisplays();
+
+            const viewAdmin = document.getElementById('view-admin');
+            if (viewAdmin && !viewAdmin.classList.contains('hidden')) {
+                renderAdminDashboard();
+            }
+            const viewHome = document.getElementById('view-home');
+            if (viewHome && !viewHome.classList.contains('hidden')) {
+                renderHomePortal();
+            }
+        }, 1000);
+
+        function setTimeframeFilter(tf) {
+            currentTimeframe = tf;
+
+            const btnDaily = document.getElementById('tf-btn-daily');
+            const btnWeekly = document.getElementById('tf-btn-weekly');
+            const btnMonthly = document.getElementById('tf-btn-monthly');
+
+            const activeClass = "px-3 py-1 text-xs font-semibold rounded-lg bg-emerald-600 text-white shadow transition-all";
+            const inactiveClass = "px-3 py-1 text-xs font-semibold rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all";
+
+            btnDaily.className = tf === 'daily' ? activeClass : inactiveClass;
+            btnWeekly.className = tf === 'weekly' ? activeClass : inactiveClass;
+            btnMonthly.className = tf === 'monthly' ? activeClass : inactiveClass;
+
+            const tfLabelMap = {
+                daily: 'Hari Ini',
+                weekly: 'Minggu Ini',
+                monthly: 'Bulan Ini'
+            };
+
+            const labelText = tfLabelMap[tf] || 'Hari Ini';
+            document.getElementById('tf-label-time').textContent = labelText;
+            document.getElementById('tf-label-eff').textContent = labelText;
+            document.getElementById('tf-label-target').textContent = labelText;
+
+            initOrUpdateAdminCharts();
+            showToast(`Menampilkan Analytics: ${labelText}`, 'info');
+        }
+
+        function filterAdminTableByUnit(unit) {
+            selectedUnitFilter = unit;
+            renderAdminDashboard();
+            showToast(`Filter Unit Kerja: ${unit}`, 'info');
+        }
+
+        function initOrUpdateAdminCharts() {
+            if (typeof Chart === 'undefined') return;
+
+            const filteredStaff = selectedUnitFilter === 'ALL' 
+                ? staffList 
+                : staffList.filter(s => s.unitKerja === selectedUnitFilter);
+
+            const labels = filteredStaff.map(s => s.name.split(' ')[0]);
+            
+            let multiplier = 1;
+            let targetMultiplier = 1;
+            let timeUnitLabel = 'Menit';
+
+            if (currentTimeframe === 'weekly') {
+                multiplier = 5;
+                targetMultiplier = 5;
+                timeUnitLabel = 'Jam';
+            } else if (currentTimeframe === 'monthly') {
+                multiplier = 22;
+                targetMultiplier = 22;
+                timeUnitLabel = 'Jam';
+            }
+
+            const activeData = filteredStaff.map(s => {
+                const sec = (s.activeSeconds || 0) * multiplier;
+                return timeUnitLabel === 'Jam' ? Math.round(sec / 3600 * 10) / 10 : Math.round(sec / 60 * 10) / 10;
+            });
+
+            const idleData = filteredStaff.map(s => {
+                const sec = (s.idleSeconds || 0) * multiplier;
+                return timeUnitLabel === 'Jam' ? Math.round(sec / 3600 * 10) / 10 : Math.round(sec / 60 * 10) / 10;
+            });
+
+            const wordsData = filteredStaff.map(s => (s.wordsTyped || 0) * multiplier);
+            const targetData = filteredStaff.map(s => (s.targetWords || 600) * targetMultiplier);
+
+            let activeCount = 0;
+            let idleCount = 0;
+            let totalActiveSec = 0;
+            let totalIdleSec = 0;
+            let topStaff = null;
+            let maxWords = -1;
+
+            filteredStaff.forEach((s, idx) => {
+                totalActiveSec += s.activeSeconds * multiplier;
+                totalIdleSec += s.idleSeconds * multiplier;
+
+                const isThisStaffSelected = s.id === activeStaffId;
+                const isStaffIdle = isThisStaffSelected ? isCurrentlyIdle : (s.idleSeconds > s.activeSeconds);
+                if (isStaffIdle) idleCount++;
+                else activeCount++;
+
+                const calculatedWords = wordsData[idx];
+                if (calculatedWords > maxWords) {
+                    maxWords = calculatedWords;
+                    topStaff = s.name;
+                }
+            });
+
+            const grandTotalSec = totalActiveSec + totalIdleSec;
+            const efficiencyScore = grandTotalSec > 0 ? Math.round((totalActiveSec / grandTotalSec) * 100) : 100;
+
+            const efficiencyEl = document.getElementById('dash-efficiency-score');
+            if (efficiencyEl) efficiencyEl.textContent = `${efficiencyScore}%`;
+
+            const topPerfEl = document.getElementById('dash-top-performer-name');
+            if (topPerfEl) topPerfEl.textContent = topStaff ? topStaff : '-';
+
+            // Chart 1: Active vs Idle Time
+            const ctx1 = document.getElementById('chart-active-idle');
+            if (ctx1) {
+                if (!chartActiveIdle) {
+                    chartActiveIdle = new Chart(ctx1.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: `Waktu Aktif (${timeUnitLabel})`,
+                                    data: activeData,
+                                    backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                                    borderColor: '#10b981',
+                                    borderWidth: 1,
+                                    borderRadius: 6
+                                },
+                                {
+                                    label: `Waktu Inaktif (${timeUnitLabel})`,
+                                    data: idleData,
+                                    backgroundColor: 'rgba(245, 158, 11, 0.85)',
+                                    borderColor: '#f59e0b',
+                                    borderWidth: 1,
+                                    borderRadius: 6
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 } } }
+                            },
+                            scales: {
+                                x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                                y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                            }
+                        }
+                    });
+                } else {
+                    chartActiveIdle.data.labels = labels;
+                    chartActiveIdle.data.datasets[0].label = `Waktu Aktif (${timeUnitLabel})`;
+                    chartActiveIdle.data.datasets[1].label = `Waktu Inaktif (${timeUnitLabel})`;
+                    chartActiveIdle.data.datasets[0].data = activeData;
+                    chartActiveIdle.data.datasets[1].data = idleData;
+                    chartActiveIdle.update('none');
+                }
+            }
+
+            // Chart 2: Status Distribution
+            const ctx2 = document.getElementById('chart-status-pie');
+            if (ctx2) {
+                if (!chartStatusPie) {
+                    chartStatusPie = new Chart(ctx2.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Aktif Mengetik', 'Inaktif / Melamun'],
+                            datasets: [{
+                                data: [activeCount, idleCount],
+                                backgroundColor: ['#10b981', '#f59e0b'],
+                                borderWidth: 2,
+                                borderColor: '#0f172a'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Inter', size: 10 } } }
+                            },
+                            cutout: '70%'
+                        }
+                    });
+                } else {
+                    chartStatusPie.data.datasets[0].data = [activeCount, idleCount];
+                    chartStatusPie.update('none');
+                }
+            }
+
+            // Chart 3: Target Completion Progress
+            const ctx3 = document.getElementById('chart-words-progress');
+            if (ctx3) {
+                if (!chartWordsProgress) {
+                    chartWordsProgress = new Chart(ctx3.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Kata Naskah Diketik',
+                                    data: wordsData,
+                                    backgroundColor: 'rgba(6, 182, 212, 0.85)',
+                                    borderColor: '#06b6d4',
+                                    borderWidth: 1,
+                                    borderRadius: 6
+                                },
+                                {
+                                    label: `Target Shift`,
+                                    data: targetData,
+                                    backgroundColor: 'rgba(51, 65, 85, 0.5)',
+                                    borderColor: '#64748b',
+                                    borderWidth: 1,
+                                    borderRadius: 6
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 } } }
+                            },
+                            scales: {
+                                x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                                y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                            }
+                        }
+                    });
+                } else {
+                    chartWordsProgress.data.labels = labels;
+                    chartWordsProgress.data.datasets[0].data = wordsData;
+                    chartWordsProgress.data.datasets[1].data = targetData;
+                    chartWordsProgress.update('none');
+                }
+            }
+        }
+
+        function renderAdminDashboard() {
+            const tbody = document.getElementById('admin-monitoring-tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            const filteredStaff = selectedUnitFilter === 'ALL' 
+                ? staffList 
+                : staffList.filter(s => s.unitKerja === selectedUnitFilter);
+
+            let totalWordsSum = 0;
+            let activeCount = 0;
+            let idleCount = 0;
+
+            filteredStaff.forEach(staff => {
+                totalWordsSum += staff.wordsTyped;
+                
+                const isThisStaffSelected = staff.id === activeStaffId;
+                const isStaffIdle = isThisStaffSelected ? isCurrentlyIdle : (staff.idleSeconds > staff.activeSeconds);
+                
+                if (!isStaffIdle) activeCount++;
+                else idleCount++;
+
+                const progressPct = Math.min(100, Math.round((staff.wordsTyped / staff.targetWords) * 100));
+                const code = staff.accessCode || `OP-${Math.floor(100000 + Math.random() * 900000)}`;
+                staff.accessCode = code;
+
+                const isCodeVisible = !!visiblePasscodes[staff.id];
+                const displayCode = isCodeVisible ? code : '••••••••';
+
+                const tr = document.createElement('tr');
+                tr.className = `hover:bg-slate-900/60 transition-colors ${isThisStaffSelected ? 'bg-slate-900/40' : ''}`;
+                tr.innerHTML = `
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-slate-800 text-emerald-400 font-bold text-xs flex items-center justify-center shrink-0 border border-slate-700">
+                                ${staff.name.substring(0, 2).toUpperCase()}
+                            </div>
+                            <div>
+                                <div class="font-semibold text-slate-200">${staff.name}</div>
+                                <div class="text-[10px] text-emerald-400 font-mono">NIP. ${staff.nip || '-'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+                            ${staff.unitKerja || 'Bagian Umum'}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        ${!isStaffIdle ? 
+                            `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">🟢 Aktif</span>` : 
+                            `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-950 text-amber-400 border border-amber-800">🟡 Inaktif</span>`
+                        }
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-1.5 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800 max-w-[130px] justify-between">
+                            <span class="font-mono text-xs font-bold ${isCodeVisible ? 'text-emerald-400' : 'text-slate-500'}">${displayCode}</span>
+                            <div class="flex items-center gap-1">
+                                <button onclick="togglePasscodeVisibility('${staff.id}')" class="text-slate-400 hover:text-white text-[11px]">
+                                    <i class="fa-solid ${isCodeVisible ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                                </button>
+                                <button onclick="copyStaffAccessCode('${code}')" class="text-slate-400 hover:text-emerald-400 text-[11px]">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 font-mono text-emerald-400">${formatHMS(staff.activeSeconds)}</td>
+                    <td class="py-3 px-4 font-mono text-amber-400">${formatHMS(staff.idleSeconds)}</td>
+                    <td class="py-3 px-4 font-mono text-slate-200">${staff.wordsTyped} <span class="text-slate-500 text-[10px]">kata</span></td>
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                                <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all" style="width: ${progressPct}%"></div>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400">${progressPct}%</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 text-right flex items-center justify-end gap-1.5">
+                        <button onclick="openWorkspaceForStaff('${staff.id}')" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded text-[11px] transition-colors font-sans">
+                            Workspace
+                        </button>
+                        <button onclick="deleteStaff('${staff.id}')" class="px-2 py-1 bg-rose-950/80 hover:bg-rose-900 border border-rose-800/80 text-rose-300 hover:text-rose-100 rounded text-[11px] transition-colors font-sans">
+                            <i class="fa-solid fa-trash text-[10px]"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('dash-total-staff').textContent = filteredStaff.length;
+            document.getElementById('dash-active-staff').textContent = activeCount;
+            document.getElementById('dash-idle-staff').textContent = idleCount;
+            document.getElementById('dash-total-words').textContent = totalWordsSum;
+
+            initOrUpdateAdminCharts();
+        }
+
+        function openWorkspaceForStaff(staffId) {
+            requestSwitchStaff(staffId);
+        }
+
+        function deleteStaff(staffId) {
+            if (staffList.length <= 1) {
+                showToast('Tidak dapat menghapus! Minimal harus ada 1 staf operator.', 'error');
+                return;
+            }
+
+            const staff = staffList.find(s => s.id === staffId);
+            if (!staff) return;
+
+            showConfirmModal({
+                title: 'Konfirmasi Hapus Staf Operator',
+                message: `Apakah Anda yakin ingin menghapus "${staff.name}" (NIP: ${staff.nip})? Data staf akan dihapus secara permanen.`,
+                theme: 'rose',
+                confirmText: 'Ya, Hapus Staf',
+                onConfirm: () => confirmDeleteStaff(staffId)
+            });
+        }
+
+        function confirmDeleteStaff(staffId) {
+            const targetIndex = staffList.findIndex(s => s.id === staffId);
+            if (targetIndex === -1) return;
+
+            const deletedStaffName = staffList[targetIndex].name;
+            staffList.splice(targetIndex, 1);
+
+            if (activeStaffId === staffId) {
+                activeStaffId = staffList[0].id;
+                setActiveStaff(activeStaffId, false);
+            }
+
+            saveStaffDataToStorage();
+            renderStaffCards();
+            renderAdminDashboard();
+            renderHomePortal();
+            showToast(`Staf Operator "${deletedStaffName}" berhasil dihapus`, 'info');
+        }
+
+        function resetAllTimers() {
+            showConfirmModal({
+                title: 'Konfirmasi Reset Waktu Staf',
+                message: 'Apakah Anda yakin ingin mengulang (reset) semua waktu aktif, waktu inaktif, dan jumlah kata yang diketik untuk seluruh staf pengetik?',
+                theme: 'amber',
+                confirmText: 'Ya, Reset Semua Waktu',
+                onConfirm: () => confirmResetAllTimers()
+            });
+        }
+
+        function confirmResetAllTimers() {
+            staffList.forEach(s => {
+                s.activeSeconds = 0;
+                s.idleSeconds = 0;
+                s.wordsTyped = 0;
+            });
+            saveStaffDataToStorage();
+            updateTimerDisplays();
+            renderAdminDashboard();
+            renderHomePortal();
+            showToast('Semua timer dan statistik staf berhasil direset!', 'info');
+        }
+
+        function openPrintReportModal() {
+            const modal = document.getElementById('modal-print-report');
+            const dateStr = document.getElementById('report-date-str');
+            const countEl = document.getElementById('report-staff-count');
+            const effEl = document.getElementById('report-efficiency-score');
+            const tbody = document.getElementById('report-table-tbody');
+
+            const now = new Date();
+            if (dateStr) dateStr.textContent = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            if (countEl) countEl.textContent = staffList.length;
+
+            let totalActive = 0;
+            let totalIdle = 0;
+            tbody.innerHTML = '';
+
+            staffList.forEach((s, idx) => {
+                totalActive += s.activeSeconds;
+                totalIdle += s.idleSeconds;
+
+                const totalSec = s.activeSeconds + s.idleSeconds;
+                const eff = totalSec > 0 ? Math.round((s.activeSeconds / totalSec) * 100) : 100;
+
+                const tr = document.createElement('tr');
+                tr.className = "text-center";
+                tr.innerHTML = `
+                    <td class="border border-gray-400 p-1 font-mono">${idx + 1}</td>
+                    <td class="border border-gray-400 p-1 text-left font-semibold">${s.name}<br><span class="text-[9px] text-gray-600">NIP. ${s.nip}</span></td>
+                    <td class="border border-gray-400 p-1">${s.unitKerja || 'Umum'}</td>
+                    <td class="border border-gray-400 p-1 font-mono">${formatHMS(s.activeSeconds)}</td>
+                    <td class="border border-gray-400 p-1 font-mono">${formatHMS(s.idleSeconds)}</td>
+                    <td class="border border-gray-400 p-1 font-mono">${s.wordsTyped}</td>
+                    <td class="border border-gray-400 p-1 font-mono">${s.targetWords}</td>
+                    <td class="border border-gray-400 p-1 font-mono font-bold text-emerald-700">${eff}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const grandTotal = totalActive + totalIdle;
+            const avgEfficiency = grandTotal > 0 ? Math.round((totalActive / grandTotal) * 100) : 100;
+            if (effEl) effEl.textContent = `${avgEfficiency}%`;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closePrintReportModal() {
+            document.getElementById('modal-print-report').classList.add('hidden');
+        }
+
+        let pendingConfirmAction = null;
+
+        function showConfirmModal(options) {
+            const modal = document.getElementById('modal-confirm');
+            const titleEl = document.getElementById('confirm-title');
+            const messageEl = document.getElementById('confirm-message');
+            const iconEl = document.getElementById('confirm-icon');
+            const iconContainer = document.getElementById('confirm-icon-container');
+            const confirmBtn = document.getElementById('btn-confirm-action');
+
+            titleEl.textContent = options.title || 'Konfirmasi';
+            messageEl.textContent = options.message || 'Apakah Anda yakin?';
+            
+            if (options.theme === 'amber') {
+                iconContainer.className = "w-10 h-10 rounded-2xl bg-amber-950 border border-amber-800 text-amber-400 flex items-center justify-center shrink-0";
+                iconEl.className = "fa-solid fa-rotate-left text-lg";
+                confirmBtn.className = "px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-medium text-xs rounded-xl shadow transition-all";
+            } else {
+                iconContainer.className = "w-10 h-10 rounded-2xl bg-rose-950 border border-rose-800 text-rose-400 flex items-center justify-center shrink-0";
+                iconEl.className = "fa-solid fa-triangle-exclamation text-lg";
+                confirmBtn.className = "px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs rounded-xl shadow transition-all";
+            }
+
+            confirmBtn.textContent = options.confirmText || 'Ya, Lanjutkan';
+            pendingConfirmAction = options.onConfirm;
+
+            confirmBtn.onclick = function() {
+                if (typeof pendingConfirmAction === 'function') {
+                    pendingConfirmAction();
+                }
+                closeConfirmModal();
+            };
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('modal-confirm').classList.add('hidden');
+            pendingConfirmAction = null;
+        }
+
+        function exportAdminReport() {
+            let csv = "Nama Staf,NIP,Unit Kerja,Jabatan,Kode PIN,Waktu Aktif (s),Waktu Inaktif (s),Kata Diketik,Target Kata\n";
+            staffList.forEach(s => {
+                csv += `"${s.name}","${s.nip}","${s.unitKerja}","${s.role}","${s.accessCode}",${s.activeSeconds},${s.idleSeconds},${s.wordsTyped},${s.targetWords}\n`;
+            });
+            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csv);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Laporan_Pengawasan_Staf_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Laporan Rekap Staf Diunduh!', 'success');
+        }
+
+        function openAddStaffModal() {
+            document.getElementById('modal-add-staff').classList.remove('hidden');
+            generateRandomAccessCode();
+        }
+
+        function closeAddStaffModal() {
+            document.getElementById('modal-add-staff').classList.add('hidden');
+            document.getElementById('form-add-staff').reset();
+        }
+
+        function openAppsScriptModal() {
+            document.getElementById('modal-appsscript').classList.remove('hidden');
+        }
+
+        function closeAppsScriptModal() {
+            document.getElementById('modal-appsscript').classList.add('hidden');
+        }
+
+        function copyAppsScriptCode() {
+            const codeText = document.getElementById('appscript-code-block').innerText;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = codeText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('Kode Apps Script berhasil disalin ke clipboard!', 'success');
+        }
+
+        function handleStaffSubmit(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('input-staff-name').value.trim();
+            const nip = document.getElementById('input-staff-nip').value.trim() || `199${Math.floor(10000000000000 + Math.random() * 90000000000000)}`;
+            const unit = document.getElementById('input-staff-unit').value;
+            const role = document.getElementById('input-staff-role').value.trim();
+            const code = document.getElementById('input-staff-code').value.trim() || `OP-${Math.floor(100000 + Math.random() * 900000)}`;
+            const target = parseInt(document.getElementById('input-staff-target').value, 10) || 600;
+            const sheetUrl = document.getElementById('input-staff-sheet-url').value.trim();
+
+            const newStaff = {
+                id: 'op-' + Date.now(),
+                name: name,
+                nip: nip,
+                unitKerja: unit,
+                role: role,
+                accessCode: code,
+                targetWords: target,
+                sheetUrl: sheetUrl,
+                webAppUrl: sheetUrl.includes('script.google.com') ? sheetUrl : '',
+                activeSeconds: 0,
+                idleSeconds: 0,
+                wordsTyped: 0,
+                wrapText: false,
+                classification: 'TERBATAS',
+                initialData: [
+                    ["Tanggal", "No Naskah", "Perihal Surat", "Pengolah Data", "Status Sync"],
+                    [new Date().toISOString().split('T')[0], "NSK-001", "Entri naskah awal dinas", name, "Tersimpan"]
+                ]
+            };
+
+            staffList.push(newStaff);
+            saveStaffDataToStorage();
+            renderStaffCards();
+            renderHomePortal();
+            closeAddStaffModal();
+            setActiveStaff(newStaff.id);
+            switchMainView('browser');
+            showToast(`Staf Baru "${name}" Berhasil Terdaftar (PIN: ${code})!`, 'success');
+        }
+
+        function loadUrlFromAddressBar() {
+            const urlInput = document.getElementById('url-address-bar').value.trim();
+            if (!urlInput) return;
+
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (activeStaff) {
+                activeStaff.sheetUrl = urlInput;
+                if (urlInput.includes('script.google.com')) {
+                    activeStaff.webAppUrl = urlInput;
+                    switchEditorMode('native');
+                }
+                saveStaffDataToStorage();
+                fetchGoogleSheetDataCSV(urlInput, activeStaff);
+            }
+
+            updateIframeSource(urlInput);
+            showLoadingBar();
+            showToast('Memuat URL & Memperbarui Data Naskah...', 'info');
+        }
+
+        function saveCurrentSheetDataToGoogle() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (!activeStaff) return;
+
+            showLoadingBar();
+            saveStaffDataToStorage();
+
+            if (activeStaff.webAppUrl) {
+                fetch(activeStaff.webAppUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rows: activeStaff.initialData })
+                })
+                .then(() => {
+                    showToast('Data naskah dikirim & tersimpan ke Google Sheets (Webhook)!', 'success');
+                })
+                .catch(err => {
+                    showToast('Gagal terhubung ke Webhook Google Apps Script', 'error');
+                });
+            } else {
+                showToast('Data naskah tersimpan secara lokal!', 'info');
+            }
+        }
+
+        function navigateHistory(direction) {
+            if (direction === 'back' && historyIndex > 0) {
+                historyIndex--;
+                const url = navigationHistory[historyIndex];
+                document.getElementById('url-address-bar').value = url;
+                updateIframeSource(url);
+            } else if (direction === 'forward' && historyIndex < navigationHistory.length - 1) {
+                historyIndex++;
+                const url = navigationHistory[historyIndex];
+                document.getElementById('url-address-bar').value = url;
+                updateIframeSource(url);
+            }
+        }
+
+        function refreshCurrentSheet() {
+            const activeStaff = staffList.find(s => s.id === activeStaffId);
+            if (activeStaff) {
+                fetchGoogleSheetDataCSV(activeStaff.sheetUrl, activeStaff);
+                renderNativeSheetGrid(activeStaff);
+                updateIframeSource(activeStaff.sheetUrl);
+                showLoadingBar();
+                showToast('Sheet Naskah Diperbarui & Disinkronkan', 'info');
+            }
+        }
+
+        function showLoadingBar() {
+            const bar = document.getElementById('browser-loading-bar');
+            bar.style.width = '30%';
+            setTimeout(() => { bar.style.width = '70%'; }, 150);
+            setTimeout(() => { bar.style.width = '100%'; }, 300);
+            setTimeout(() => { bar.style.width = '0%'; }, 600);
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            let bgClass = "bg-slate-900 border-slate-700 text-slate-200";
+            let icon = "fa-info-circle text-blue-400";
+
+            if (type === 'success') {
+                bgClass = "bg-emerald-950 border-emerald-700 text-emerald-100";
+                icon = "fa-check-circle text-emerald-400";
+            } else if (type === 'error') {
+                bgClass = "bg-rose-950 border-rose-700 text-rose-100";
+                icon = "fa-exclamation-circle text-rose-400";
+            }
+
+            toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-2xl border shadow-xl text-xs backdrop-blur-md transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto ${bgClass}`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i> <span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        window.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+                if (e.shiftKey) {
+                    redoGridChange();
+                } else {
+                    undoGridChange();
+                }
+            } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+                redoGridChange();
+            }
+        });
+
+        window.onload = function() {
+            loadSavedTheme();
+            loadStaffDataFromStorage();
+            if (staffList.length > 0) {
+                setActiveStaff(staffList[0].id);
+            }
+            renderHomePortal();
+        };
+    </script>
+</body>
+</html>
